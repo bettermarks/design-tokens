@@ -6,6 +6,7 @@ import { PropertyType } from '@typings/valueTypes'
 import { roundRgba } from '@utils/convertColor'
 import roundWithDecimals from '@utils/roundWithDecimals'
 import handleVariableAlias from '@utils/handleVariableAlias'
+import resolveComposeColor, { isComposeColor } from '@utils/resolveComposeColor'
 import processAliasModes from '@utils/processAliasModes'
 import { Settings } from '@typings/settings'
 import deepMerge from '@utils/deepMerge'
@@ -19,6 +20,24 @@ const extractVariable = async (
   let values = {}
   if (value.type === 'VARIABLE_ALIAS') {
     return await handleVariableAlias(variable, value, mode)
+  }
+  // A composed colour (base colour reference + alpha percentage) is neither an
+  // alias nor a raw RGBA, so resolve it to a concrete RGBA before it reaches the
+  // COLOR case below, otherwise its alpha would be dropped.
+  if (isComposeColor(value)) {
+    return {
+      name: variable.name,
+      description: variable.description || undefined,
+      exportKey: tokenTypes.variables.key as tokenExportKeyType,
+      category: 'color',
+      values: {
+        fill: {
+          value: roundRgba(await resolveComposeColor(value, mode?.name)),
+          type: 'color' as PropertyType,
+          blendMode: 'normal'
+        }
+      }
+    }
   }
   switch (variable.resolvedType) {
     case 'COLOR':

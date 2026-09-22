@@ -1,3 +1,11 @@
+> [!NOTE]
+> **This is a bettermarks fork of [lukasoppermann/design-tokens](https://github.com/lukasoppermann/design-tokens).**
+> It exists to add support for Figma's 2026 "Control opacity at scale" feature, which stores translucent colours as `COMPOSE_COLOR` expressions. The upstream plugin drops the alpha on these and exports the colour as fully opaque. This fork resolves the expression to a concrete RGBA so the transparency is preserved. See `src/utilities/resolveComposeColor.ts`.
+>
+> The `upstream` remote points at the original repository so we can pull in future fixes.
+
+---
+
 > [!WARNING]
 > **This plugin is only partially supported!**
 > This means: I don't have capacity to add any features or really improve stuff. Bugfixes may be added if time allows.
